@@ -1,6 +1,6 @@
 package com.example.thymeleaf.model;
 
-class Doctor {
+public class Doctor {
 
     private int number;
     private String name;
@@ -28,5 +28,5 @@ class Doctor {
     public void setName(String name) {
         this.name = name;
     }
-    
+
 }
