@@ -1,26 +1,30 @@
 package com.wildcodeschool.myProject.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.wildcodeschool.myProject.model.Doctor;
 
 @Controller
 public class DoctorController {
-    @GetMapping("/doctor/1")
-    @ResponseBody
-    public String doctor1() {
-        return "William Hartnell";
-    }
 
-    @GetMapping("/doctor/10")
+    @GetMapping("/doctor/{number}")
     @ResponseBody
-    public String doctor10() {
-        return "David Tennant";
-    }
+    public Doctor doctor(@PathVariable int number) {
 
-    @GetMapping("/doctor/13")
-    @ResponseBody
-    public String doctor13() {
-        return "Jodie Whittaker";
+        if (number == 13) {
+            return new Doctor(13, "Jodie Whittaker");
+        }
+
+        if (number <= 12 && number >= 1) {
+            throw new ResponseStatusException(HttpStatus.SEE_OTHER);
+        }
+
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                "Impossible de récupérer l'incarnation de " + number);
     }
 }
