@@ -1,15 +1,15 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/database_name
+    url: jdbc:postgresql://localhost:5432/wcs_database
     username: username
     password: password
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: create
-    database: postgresql
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect

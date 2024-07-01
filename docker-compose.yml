@@ -1,21 +1,21 @@
 services:
-  service-name:
-    container_name: container_name
+  wcs-postgres:
+    container_name: wcs-container
     image: postgres
     environment:
       POSTGRES_USER: username
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: database_name
+      POSTGRES_DB: wcs_database
     ports:
-      - "5434:5434"
+      - "5432:5432"
     volumes:
-      - volume_name:/var/lib/postgresql/data
+      - wcs-volume:/var/lib/postgresql/data
     networks:
-      - network_name
+      - wcs-network
 
 volumes:
-  volume_name:
+  wcs-volume:
 
 networks:
-  network_name:
+  wcs-network:
     driver: bridge
