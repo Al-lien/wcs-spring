@@ -1,0 +1,21 @@
+services:
+  service-name:
+    container_name: container_name
+    image: postgres
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: database_name
+    ports:
+      - "5434:5434"
+    volumes:
+      - volume_name:/var/lib/postgresql/data
+    networks:
+      - network_name
+
+volumes:
+  volume_name:
+
+networks:
+  network_name:
+    driver: bridge
