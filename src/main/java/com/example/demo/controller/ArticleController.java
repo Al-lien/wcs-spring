@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,6 +42,42 @@ public class ArticleController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(article);
+    }
+
+    @GetMapping("/title/{title}")
+    public ResponseEntity<List<Article>> getArticleByTitle(@PathVariable String title) {
+        List<Article> articles = articleService.getArticleByTitle(title);
+        if (articles.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(articles);
+    }
+
+    @GetMapping("/article/{article}")
+    public ResponseEntity<List<Article>> getArticleByContent(@PathVariable String content) {
+        List<Article> articles = articleService.getArticleByContent(content);
+        if (articles.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(articles);
+    }
+
+    @GetMapping("/date/{date}")
+    public ResponseEntity<List<Article>> getArticleByDate(@PathVariable LocalDate date) {
+        List<Article> articles = articleService.getArticleByCreationDateAfterTime(date);
+        if (articles.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(articles);
+    }
+
+    @GetMapping("/lastcreated")
+    public ResponseEntity<List<Article>> getLastFiveArticles() {
+        List<Article> articles = articleService.getFirstFiveByCreatedAtOrderByCreatedAtDesc();
+        if (articles.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(articles);
     }
 
     @PostMapping
