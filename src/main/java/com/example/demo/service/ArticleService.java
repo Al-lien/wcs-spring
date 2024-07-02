@@ -6,17 +6,22 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import com.example.demo.domain.Article;
+
 import com.example.demo.repository.ArticleRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class ArticleService {
 
+    @Autowired
     private final ArticleRepository articleRepository;
 
     public List<Article> getAllArticles() {
@@ -29,23 +34,33 @@ public class ArticleService {
         return optionalArticle;
     }
 
+    @Transactional
     public Article createArticle(Article article) {
         article.setCreatedAt(LocalDateTime.now());
         article.setUpdatedAt(LocalDateTime.now());
+
         articleRepository.save(article);
         return article;
     }
 
+    @Transactional
     public Article updateArticle(UUID id, Article articleDetails) {
         Article article = articleRepository.findById(id).orElse(null);
         if (article == null) {
             return null;
         }
-        article.setTitle(articleDetails.getTitle());
-        article.setContent(articleDetails.getContent());
-        article.setUpdatedAt(LocalDateTime.now());
-        Article updatedArticle = articleRepository.save(article);
-        return updatedArticle;
+
+        article = Article.builder()
+                .id(articleDetails.getId())
+                .title(articleDetails.getTitle())
+                .content(articleDetails.getContent())
+                .createdAt(articleDetails.getCreatedAt())
+                .updatedAt(LocalDateTime.now())
+                .category(articleDetails.getCategory())
+                .build();
+
+        return articleRepository.save(article);
+
     }
 
     public void deleteArticle(UUID id) {

@@ -30,4 +30,8 @@ public class Article {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 }
