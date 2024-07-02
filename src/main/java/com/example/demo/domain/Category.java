@@ -1,5 +1,6 @@
 package com.example.demo.domain;
 
+import java.util.List;
 import java.util.UUID;
 
 import jakarta.persistence.*;
@@ -18,4 +19,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String name;
+
+    @OneToMany(mappedBy = "category")
+    private List<Article> articles;
 }
