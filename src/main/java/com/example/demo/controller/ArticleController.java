@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.domain.ArticleEntity;
 import com.example.demo.dto.ArticleDto;
+import com.example.demo.dto.ArticleResponseDto;
 import com.example.demo.dto.converter.ArticleConverter;
+import com.example.demo.dto.converter.ArticleResponseConverter;
 import com.example.demo.service.ArticleService;
 
 @RestController
@@ -31,44 +33,48 @@ public class ArticleController {
     @Autowired
     private ArticleConverter articleConverter;
 
+    @Autowired
+    private ArticleResponseConverter responseConverter;
+
     @GetMapping
-    public ResponseEntity<List<ArticleDto>> getAllArticles() {
+    public ResponseEntity<List<ArticleResponseDto>> getAllArticles() {
         List<ArticleEntity> articles = articleService.getAllArticles();
 
         if (articles.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        List<ArticleDto> articleDtos = articles
+        List<ArticleResponseDto> articleDtos = articles
                 .stream()
-                .map(articleConverter::convertToDto)
+                .map(responseConverter::convertToDto)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(articleDtos);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ArticleDto> getArticleById(@PathVariable UUID id) {
+    public ResponseEntity<ArticleResponseDto> getArticleById(@PathVariable UUID id) {
         ArticleEntity article = articleService.getArticleById(id);
         if (article == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(articleConverter.convertToDto(article));
+        return ResponseEntity.ok(responseConverter.convertToDto(article));
     }
 
     @PostMapping
-    public ResponseEntity<ArticleDto> createArticle(@RequestBody ArticleDto articleDto) {
+    public ResponseEntity<ArticleResponseDto> createArticle(@RequestBody ArticleDto articleDto) {
         ArticleEntity savedArticle = articleService.createArticle(articleConverter.convertToDomain(articleDto));
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(articleConverter.convertToDto(savedArticle));
+                .body(responseConverter.convertToDto(savedArticle));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ArticleDto> updateArticle(@PathVariable UUID id, @RequestBody ArticleDto articleDetailsDto) {
+    public ResponseEntity<ArticleResponseDto> updateArticle(@PathVariable UUID id,
+            @RequestBody ArticleDto articleDetailsDto) {
         ArticleEntity updatedArticle = articleService.updateArticle(id,
                 articleConverter.convertToDomain(articleDetailsDto));
 
-        return ResponseEntity.ok(articleConverter.convertToDto(updatedArticle));
+        return ResponseEntity.ok(responseConverter.convertToDto(updatedArticle));
 
     }
 

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.domain.CategoryEntity;
-import com.example.demo.dto.CategoryCreationRequest;
+import com.example.demo.dto.CategoryCreationRequestDto;
 import com.example.demo.dto.CategoryDto;
 import com.example.demo.dto.converter.CategoryConverter;
 import com.example.demo.dto.converter.CategoryCreationConverter;
@@ -62,7 +62,7 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryCreationRequest categoryDto) {
+    public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryCreationRequestDto categoryDto) {
 
         CategoryEntity savedCategory = categoryService.createCategory(creationConverter.convertToDomain(categoryDto));
 

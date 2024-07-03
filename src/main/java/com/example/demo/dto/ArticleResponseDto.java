@@ -1,7 +1,5 @@
 package com.example.demo.dto;
 
-import java.util.UUID;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,9 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryCreationRequest {
+public class ArticleResponseDto {
 
-    private UUID id;
-    private String name;
-
+    private String title;
+    private String content;
+    private String category;
 }
