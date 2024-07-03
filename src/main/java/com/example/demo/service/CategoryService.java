@@ -1,14 +1,13 @@
 package com.example.demo.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.domain.Article;
-import com.example.demo.domain.Category;
+import com.example.demo.domain.CategoryEntity;
+import com.example.demo.dto.converter.CategoryConverter;
 import com.example.demo.repository.CategoryRepository;
 
 import jakarta.transaction.Transactional;
@@ -21,40 +20,40 @@ public class CategoryService {
     @Autowired
     private final CategoryRepository categoryRepository;
 
-    public List<Category> getAllCategories() {
-        List<Category> categories = categoryRepository.findAll();
+    public List<CategoryEntity> getAllCategories() {
+        List<CategoryEntity> categories = categoryRepository.findAll();
+
         return categories;
     }
 
-    public Optional<Category> getCategoryById(UUID id) {
-        Optional<Category> optionalCategory = categoryRepository.findById(id);
-        return optionalCategory;
-    }
+    public CategoryEntity getCategoryById(UUID id) {
+        CategoryEntity category = categoryRepository.findById(id).orElse(null);
 
-    public Optional<Category> getArticleByName(String categoryName) {
-        Optional<Category> category = categoryRepository.findByName(categoryName);
         return category;
     }
 
-    public Optional<Category> getCategoryByName(String name) {
-        Optional<Category> optionalCategory = categoryRepository.findByName(name);
-        return optionalCategory;
+    public CategoryEntity getCategoryByName(String name) {
+        CategoryEntity category = categoryRepository.findByName(name).orElse(null);
+        return category;
     }
 
     @Transactional
-    public Category createCategory(Category category) {
+    public CategoryEntity createCategory(CategoryEntity category) {
         return categoryRepository.save(category);
     }
 
     @Transactional
-    public Category updateCategory(UUID id, Category categoryDetails) {
-        Category category = categoryRepository.findById(id).orElse(null);
+    public CategoryEntity updateCategory(UUID id, CategoryEntity categoryDetails) {
+        CategoryEntity category = categoryRepository.findById(id).orElse(null);
+
         if (category == null) {
             return null;
         }
-        category = Category.builder()
+
+        category = CategoryEntity.builder()
                 .id(categoryDetails.getId())
                 .name(categoryDetails.getName())
+                .articles(categoryDetails.getArticles())
                 .build();
 
         return categoryRepository.save(category);

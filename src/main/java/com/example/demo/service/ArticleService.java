@@ -1,21 +1,16 @@
 package com.example.demo.service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
 
-import com.example.demo.domain.Article;
-import com.example.demo.dto.ArticleConverter;
-import com.example.demo.dto.ArticleDto;
+import com.example.demo.domain.ArticleEntity;
+import com.example.demo.domain.CategoryEntity;
 import com.example.demo.repository.ArticleRepository;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -27,71 +22,97 @@ public class ArticleService {
     private final ArticleRepository articleRepository;
 
     @Autowired
-    private ArticleConverter articleConverter;
+    private CategoryService categoryService;
 
-    public List<ArticleDto> getAllArticles() {
-        List<Article> articles = articleRepository.findAll();
-
-        List<ArticleDto> articleDtos = articles
-                .stream()
-                .map(articleConverter::convertToDto)
-                .collect(Collectors.toList());
-
-        return articleDtos;
+    public List<ArticleEntity> getAllArticles() {
+        List<ArticleEntity> articles = articleRepository.findAll();
+        return articles;
     }
 
-    public ArticleDto getArticleById(UUID id) {
-        Article article = articleRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Article not found..."));
+    public ArticleEntity getArticleById(UUID id) {
+        ArticleEntity article = articleRepository.findById(id).orElse(null);
 
-        return articleConverter.convertToDto(article);
+        return article;
     }
 
     @Transactional
-    public ArticleDto createArticle(Article article) {
+    public ArticleEntity createArticle(ArticleEntity article) {
         article.setCreatedAt(LocalDateTime.now());
         article.setUpdatedAt(LocalDateTime.now());
 
-        articleRepository.save(article);
-        return articleConverter.convertToDto(article);
+        return articleRepository.save(article);
     }
 
     @Transactional
-    public ArticleDto updateArticle(UUID id, ArticleDto articleDetails) {
-        Article article = articleRepository.findById(id).orElse(null);
+    public ArticleEntity updateArticle(UUID id, ArticleEntity articleDetails) {
+        ArticleEntity article = articleRepository.findById(id).orElse(null);
+
         if (article == null) {
             return null;
         }
 
-        articleRepository.save(articleConverter.convertToDomain(articleDetails));
+        article = ArticleEntity.builder()
+                .id(articleDetails.getId())
+                .title(articleDetails.getTitle())
+                .content(articleDetails.getContent())
+                .createdAt(articleDetails.getCreatedAt())
+                .updatedAt(LocalDateTime.now())
+                .build();
 
-        return articleConverter.convertToDto(article);
+        if (articleDetails.getCategory() != null) {
+            CategoryEntity category = categoryService.getCategoryById(articleDetails.getCategory().getId());
+            if (category == null) {
+                return null;
+            }
+            article.setCategory(category);
+        }
+
+        return articleRepository.save(article);
 
     }
 
     public void deleteArticle(UUID id) {
-        Article article = articleRepository.findById(id).orElse(null);
+        ArticleEntity article = articleRepository.findById(id).orElse(null);
         articleRepository.delete(article);
     }
 
-    public List<ArticleDto> getArticleByTitle(String title) {
-        List<ArticleDto> articlesDto = articleRepository.findByTitle(title);
-        return articlesDto;
-    }
-
-    public List<ArticleDto> getArticleByContent(String content) {
-        List<ArticleDto> articlesDto = articleRepository.findByContent(content);
-        return articlesDto;
-    }
-
-    public List<ArticleDto> getArticleByCreationDateAfterTime(LocalDate date) {
-        List<ArticleDto> articlesDto = articleRepository.findByCreatedAtAfter(date);
-        return articlesDto;
-    }
-
-    public List<ArticleDto> getFirstFiveByCreatedAtOrderByCreatedAtDesc() {
-        List<ArticleDto> articlesDto = articleRepository.findFirstFiveByCreatedAtOrderByCreatedAtDesc();
-        return articlesDto;
-    }
+    /*
+     * public List<ArticleDto> getArticleByTitle(String title) {
+     * List<ArticleEntity> articles = articleRepository.findByTitle(title);
+     * List<ArticleDto> articleDtos = articles
+     * .stream()
+     * .map(articleConverter::convertToDto)
+     * .collect(Collectors.toList());
+     * return articleDtos;
+     * }
+     * 
+     * public List<ArticleDto> getArticleByContent(String content) {
+     * List<ArticleEntity> articles = articleRepository.findByContent(content);
+     * List<ArticleDto> articleDtos = articles
+     * .stream()
+     * .map(articleConverter::convertToDto)
+     * .collect(Collectors.toList());
+     * return articleDtos;
+     * }
+     * 
+     * public List<ArticleDto> getArticleByCreationDateAfterTime(LocalDate date) {
+     * List<ArticleEntity> articles = articleRepository.findByCreatedAtAfter(date);
+     * List<ArticleDto> articleDtos = articles
+     * .stream()
+     * .map(articleConverter::convertToDto)
+     * .collect(Collectors.toList());
+     * return articleDtos;
+     * }
+     * 
+     * public List<ArticleDto> getFirstFiveByCreatedAtOrderByCreatedAtDesc() {
+     * List<ArticleEntity> articles =
+     * articleRepository.findFirstFiveByCreatedAtOrderByCreatedAtDesc();
+     * List<ArticleDto> articleDtos = articles
+     * .stream()
+     * .map(articleConverter::convertToDto)
+     * .collect(Collectors.toList());
+     * return articleDtos;
+     * }
+     */
 
 }

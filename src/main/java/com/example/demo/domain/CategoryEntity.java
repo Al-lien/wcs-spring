@@ -13,7 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @Entity
 @Table(name = "category")
-public class Category {
+public class CategoryEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -21,5 +21,5 @@ public class Category {
     private String name;
 
     @OneToMany(mappedBy = "category")
-    private List<Article> articles;
+    private List<ArticleEntity> articles;
 }

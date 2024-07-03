@@ -5,10 +5,10 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.demo.domain.Category;
+import com.example.demo.domain.CategoryEntity;
 
-public interface CategoryRepository extends JpaRepository<Category, UUID> {
+public interface CategoryRepository extends JpaRepository<CategoryEntity, UUID> {
 
-    Optional<Category> findByName(String category);
+    Optional<CategoryEntity> findByName(String category);
 
 }
