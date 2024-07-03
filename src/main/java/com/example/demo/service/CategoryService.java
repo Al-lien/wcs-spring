@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.domain.CategoryEntity;
-import com.example.demo.dto.converter.CategoryConverter;
 import com.example.demo.repository.CategoryRepository;
 
 import jakarta.transaction.Transactional;
