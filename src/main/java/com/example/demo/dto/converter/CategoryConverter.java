@@ -1,60 +1,52 @@
 package com.example.demo.dto.converter;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.cglib.core.Local;
+import org.springframework.stereotype.Service;
 
-import com.example.demo.domain.ArticleEntity;
 import com.example.demo.domain.CategoryEntity;
-import com.example.demo.dto.ArticleDto;
-import com.example.demo.dto.CategoryDto;
-import com.example.demo.service.CategoryService;
+import com.example.demo.dto.ArticleResponseDto;
+import com.example.demo.dto.CategoryRequestDto;
+import com.example.demo.dto.CategoryResponseDto;
 
-@Component
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
 public class CategoryConverter {
 
-    @Autowired
-    private CategoryService categoryService;
+    private final ArticleConverter articleConverter;
 
-    public CategoryDto convertToDto(CategoryEntity category) {
-        CategoryDto categoryDto = new CategoryDto();
-        categoryDto.setId(category.getId());
-        categoryDto.setName(category.getName());
-        categoryDto.setArticles(category.getArticles().stream().map(article -> {
-            ArticleDto articleDto = new ArticleDto();
-            articleDto.setId(article.getId());
-            articleDto.setTitle(article.getTitle());
-            articleDto.setContent(article.getContent());
-            articleDto.setCreatedAt(article.getCreatedAt());
-            articleDto.setUpdatedAt(article.getUpdatedAt());
-            articleDto.setCategoryId(article.getCategory().getId());
-            return articleDto;
-        }).collect(Collectors.toList()));
+    public CategoryResponseDto convertToResponseDto(CategoryEntity category) {
+
+        CategoryResponseDto categoryDto = CategoryResponseDto.builder()
+                .id(category.getId())
+                .name(category.getName())
+                .build();
+
+        if (category.getArticles() != null) {
+
+            List<ArticleResponseDto> articles = category.getArticles()
+                    .stream()
+                    .map(articleConverter::convertToResponseDto)
+                    .collect(Collectors.toList());
+
+            categoryDto.setArticles(articles);
+        }
 
         return categoryDto;
+
     }
 
-    public CategoryEntity convertToDomain(CategoryDto categoryDto) {
-        CategoryEntity category = new CategoryEntity();
-        category.setId(categoryDto.getId());
-        category.setName(categoryDto.getName());
+    public CategoryEntity convertToDomain(CategoryRequestDto category) {
 
-        category.setArticles(categoryDto.getArticles().stream().map(articleDto -> {
-            ArticleEntity article = new ArticleEntity();
-            article.setId(articleDto.getId());
-            article.setTitle(articleDto.getTitle());
-            article.setContent(articleDto.getContent());
-            article.setCreatedAt(articleDto.getCreatedAt());
-            article.setUpdatedAt(articleDto.getUpdatedAt());
-            if (articleDto.getCategoryId() != null) {
-                CategoryEntity categoryRef = categoryService.getCategoryById(articleDto.getCategoryId());
-                article.setCategory(categoryRef);
-            }
-            return article;
-        }).collect(Collectors.toList()));
-
-        return category;
+        return CategoryEntity.builder()
+                .id(category.getId())
+                .name(category.getName())
+                .build();
     }
 
 }

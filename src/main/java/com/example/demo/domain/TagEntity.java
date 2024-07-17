@@ -14,10 +14,7 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,15 +28,14 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "article")
+@Table(name = "tag")
 @EntityListeners(AuditingEntityListener.class)
-public class ArticleEntity {
+public class TagEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private String title;
-    private String content;
+    private String name;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
@@ -48,11 +44,7 @@ public class ArticleEntity {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private CategoryEntity category;
+    @ManyToMany(mappedBy = "tags")
+    private List<ArticleEntity> articles;
 
-    @ManyToMany
-    @JoinTable(name = "article_tag", joinColumns = @JoinColumn(name = "article_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private List<TagEntity> tags;
 }

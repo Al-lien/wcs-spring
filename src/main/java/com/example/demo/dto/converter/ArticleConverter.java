@@ -1,45 +1,69 @@
 package com.example.demo.dto.converter;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
 
 import com.example.demo.domain.ArticleEntity;
 import com.example.demo.domain.CategoryEntity;
-import com.example.demo.dto.ArticleDto;
-import com.example.demo.service.CategoryService;
+import com.example.demo.domain.TagEntity;
+import com.example.demo.dto.ArticleRequestDto;
+import com.example.demo.dto.ArticleResponseDto;
+import com.example.demo.repository.CategoryRepository;
+import com.example.demo.repository.TagRepository;
 
-@Component
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
 public class ArticleConverter {
 
-    @Autowired
-    private CategoryService categoryService;
+    private final CategoryRepository categoryRepository;
+    private final TagRepository tagRepository;
 
-    public ArticleDto convertToDto(ArticleEntity article) {
-        ArticleDto articleDTO = new ArticleDto();
-        articleDTO.setId(article.getId());
-        articleDTO.setTitle(article.getTitle());
-        articleDTO.setContent(article.getContent());
-        articleDTO.setCreatedAt(article.getCreatedAt());
-        articleDTO.setUpdatedAt(article.getCreatedAt());
+    public ArticleResponseDto convertToResponseDto(ArticleEntity article) {
+
+        ArticleResponseDto articleDto = ArticleResponseDto.builder()
+                .id(article.getId())
+                .title(article.getTitle())
+                .content(article.getContent())
+                .build();
 
         if (article.getCategory() != null) {
-            articleDTO.setCategoryId(article.getCategory().getId());
+            articleDto.setCategory(article.getCategory().getName());
         }
 
-        return articleDTO;
+        if (article.getTags() != null) {
+            List<String> tags = article.getTags()
+                    .stream()
+                    .map(TagEntity::getName)
+                    .collect(Collectors.toList());
+
+            articleDto.setTags(tags);
+        }
+
+        return articleDto;
+
     }
 
-    public ArticleEntity convertToDomain(ArticleDto articleDto) {
-        ArticleEntity article = new ArticleEntity();
-        article.setId(articleDto.getId());
-        article.setTitle(articleDto.getTitle());
-        article.setContent(articleDto.getContent());
-        article.setCreatedAt(articleDto.getCreatedAt());
-        article.setUpdatedAt(articleDto.getUpdatedAt());
+    public ArticleEntity convertToDomain(ArticleRequestDto articleDto) {
+
+        ArticleEntity article = ArticleEntity.builder()
+                .id(articleDto.getId())
+                .title(articleDto.getTitle())
+                .content(articleDto.getContent())
+                .build();
 
         if (articleDto.getCategoryId() != null) {
-            CategoryEntity category = categoryService.getCategoryById(articleDto.getCategoryId());
+            CategoryEntity category = categoryRepository.findById(articleDto.getCategoryId()).orElse(null);
             article.setCategory(category);
+        }
+
+        if (articleDto.getTagIds() != null) {
+            List<TagEntity> tags = tagRepository.findAllById(articleDto.getTagIds());
+            article.setTags(tags);
         }
 
         return article;

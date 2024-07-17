@@ -12,11 +12,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ArticleResponseDto {
+public class CategoryResponseDto {
 
     UUID id;
-    String title;
-    String content;
-    String category;
-    List<String> tags;
+    String name;
+    List<ArticleResponseDto> articles;
 }

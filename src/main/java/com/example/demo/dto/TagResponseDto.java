@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryDto {
+public class TagResponseDto {
 
-    private UUID id;
-    private String name;
-    private List<ArticleDto> articles;
+    UUID id;
+    String name;
+    List<UUID> articleIds;
 }

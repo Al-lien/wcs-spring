@@ -2,9 +2,7 @@ package com.example.demo.controller;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,116 +14,83 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.domain.ArticleEntity;
-import com.example.demo.dto.ArticleDto;
+import com.example.demo.dto.ArticleRequestDto;
 import com.example.demo.dto.ArticleResponseDto;
-import com.example.demo.dto.converter.ArticleConverter;
-import com.example.demo.dto.converter.ArticleResponseConverter;
 import com.example.demo.service.ArticleService;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/articles")
+@RequiredArgsConstructor
 public class ArticleController {
 
-    @Autowired
-    private ArticleService articleService;
+    private final ArticleService articleService;
 
-    @Autowired
-    private ArticleConverter articleConverter;
+    @GetMapping("/tag/{tag}")
+    public ResponseEntity<List<ArticleResponseDto>> getAllArticlesByTagsId(
+            @PathVariable("tag") UUID tag) {
 
-    @Autowired
-    private ArticleResponseConverter responseConverter;
+        List<ArticleResponseDto> articles = articleService.getAllArticlesByTagsId(tag);
+
+        if (articles == null) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(articles);
+    }
 
     @GetMapping
     public ResponseEntity<List<ArticleResponseDto>> getAllArticles() {
-        List<ArticleEntity> articles = articleService.getAllArticles();
 
-        if (articles.isEmpty()) {
+        List<ArticleResponseDto> articles = articleService.getAllArticles();
+
+        if (articles == null) {
             return ResponseEntity.noContent().build();
         }
-        List<ArticleResponseDto> articleDtos = articles
-                .stream()
-                .map(responseConverter::convertToDto)
-                .collect(Collectors.toList());
 
-        return ResponseEntity.ok(articleDtos);
+        return ResponseEntity.ok(articles);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ArticleResponseDto> getArticleById(@PathVariable UUID id) {
-        ArticleEntity article = articleService.getArticleById(id);
-        if (article == null) {
+    public ResponseEntity<ArticleResponseDto> getArticleById(@PathVariable("id") UUID id) {
+        ArticleResponseDto articleDto = articleService.getArticleById(id);
+
+        if (articleDto == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(responseConverter.convertToDto(article));
+
+        return ResponseEntity.ok(articleDto);
     }
 
     @PostMapping
-    public ResponseEntity<ArticleResponseDto> createArticle(@RequestBody ArticleDto articleDto) {
-        ArticleEntity savedArticle = articleService.createArticle(articleConverter.convertToDomain(articleDto));
+    public ResponseEntity<ArticleResponseDto> createArticle(@RequestBody ArticleRequestDto articleDto) {
+        ArticleResponseDto savedArticle = articleService.createArticle(articleDto);
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(responseConverter.convertToDto(savedArticle));
+                .body(savedArticle);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ArticleResponseDto> updateArticle(@PathVariable UUID id,
-            @RequestBody ArticleDto articleDetailsDto) {
-        ArticleEntity updatedArticle = articleService.updateArticle(id,
-                articleConverter.convertToDomain(articleDetailsDto));
+    public ResponseEntity<ArticleResponseDto> updateArticle(@PathVariable("id") UUID id,
+            @RequestBody ArticleRequestDto articleDetailsDto) {
 
-        return ResponseEntity.ok(responseConverter.convertToDto(updatedArticle));
+        ArticleResponseDto updatedArticle = articleService.updateArticle(id,
+                articleDetailsDto);
+
+        if (updatedArticle == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(updatedArticle);
 
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteArticle(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteArticle(@PathVariable("id") UUID id) {
         articleService.deleteArticle(id);
         return ResponseEntity.noContent().build();
     }
 
-    /*
-     * @GetMapping("/title/{title}")
-     * public ResponseEntity<List<ArticleDto>> getArticleByTitle(@PathVariable
-     * String title) {
-     * List<ArticleDto> articlesDto = articleService.getArticleByTitle(title);
-     * if (articlesDto.isEmpty()) {
-     * return ResponseEntity.noContent().build();
-     * }
-     * return ResponseEntity.ok(articlesDto);
-     * }
-     * 
-     * @GetMapping("/article/{article}")
-     * public ResponseEntity<List<ArticleDto>> getArticleByContent(@PathVariable
-     * String content) {
-     * List<ArticleDto> articlesDto = articleService.getArticleByContent(content);
-     * if (articlesDto.isEmpty()) {
-     * return ResponseEntity.noContent().build();
-     * }
-     * return ResponseEntity.ok(articlesDto);
-     * }
-     * 
-     * @GetMapping("/date/{date}")
-     * public ResponseEntity<List<ArticleDto>> getArticleByDate(@PathVariable
-     * LocalDate date) {
-     * List<ArticleDto> articlesDto =
-     * articleService.getArticleByCreationDateAfterTime(date);
-     * if (articlesDto.isEmpty()) {
-     * return ResponseEntity.noContent().build();
-     * }
-     * return ResponseEntity.ok(articlesDto);
-     * }
-     * 
-     * @GetMapping("/lastcreated")
-     * public ResponseEntity<List<ArticleDto>> getLastFiveArticles() {
-     * List<ArticleDto> articlesDto =
-     * articleService.getFirstFiveByCreatedAtOrderByCreatedAtDesc();
-     * if (articlesDto.isEmpty()) {
-     * return ResponseEntity.noContent().build();
-     * }
-     * return ResponseEntity
-     * .status(HttpStatus.OK)
-     * .body(articlesDto);
-     * }
-     */
 }

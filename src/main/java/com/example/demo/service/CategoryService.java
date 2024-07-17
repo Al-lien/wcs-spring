@@ -2,11 +2,16 @@ package com.example.demo.service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.domain.ArticleEntity;
 import com.example.demo.domain.CategoryEntity;
+import com.example.demo.dto.CategoryRequestDto;
+import com.example.demo.dto.CategoryResponseDto;
+import com.example.demo.dto.converter.CategoryConverter;
+import com.example.demo.repository.ArticleRepository;
 import com.example.demo.repository.CategoryRepository;
 
 import jakarta.transaction.Transactional;
@@ -16,49 +21,76 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CategoryService {
 
-    @Autowired
     private final CategoryRepository categoryRepository;
+    private final ArticleRepository articleRepository;
+    private final CategoryConverter categoryConverter;
 
-    public List<CategoryEntity> getAllCategories() {
+    public CategoryEntity getCategoryEntity(UUID id) {
+        return categoryRepository.findById(id).orElse(null);
+    }
+
+    public List<CategoryResponseDto> getAllCategories() {
         List<CategoryEntity> categories = categoryRepository.findAll();
 
-        return categories;
+        if (categories.isEmpty()) {
+            return null;
+        }
+
+        List<CategoryResponseDto> categoryDtos = categories
+                .stream()
+                .map(categoryConverter::convertToResponseDto)
+                .collect(Collectors.toList());
+
+        return categoryDtos;
     }
 
-    public CategoryEntity getCategoryById(UUID id) {
+    public CategoryResponseDto getCategoryById(UUID id) {
         CategoryEntity category = categoryRepository.findById(id).orElse(null);
 
-        return category;
+        return categoryConverter.convertToResponseDto(category);
     }
 
-    public CategoryEntity getCategoryByName(String name) {
+    public CategoryResponseDto getCategoryByName(String name) {
         CategoryEntity category = categoryRepository.findByName(name).orElse(null);
-        return category;
+        return categoryConverter.convertToResponseDto(category);
     }
 
     @Transactional
-    public CategoryEntity createCategory(CategoryEntity category) {
-        return categoryRepository.save(category);
+    public CategoryResponseDto createCategory(CategoryRequestDto newCategory) {
+        CategoryEntity category = categoryConverter.convertToDomain(newCategory);
+
+        categoryRepository.save(category);
+
+        return categoryConverter.convertToResponseDto(category);
     }
 
     @Transactional
-    public CategoryEntity updateCategory(UUID id, CategoryEntity categoryDetails) {
+    public CategoryResponseDto updateCategory(UUID id, CategoryRequestDto categoryDetails) {
+        if (!id.equals(categoryDetails.getId())) {
+            throw new IllegalArgumentException("Category id does not match path provided id...");
+        }
+
         CategoryEntity category = categoryRepository.findById(id).orElse(null);
 
         if (category == null) {
             return null;
         }
 
-        category = CategoryEntity.builder()
-                .id(categoryDetails.getId())
-                .name(categoryDetails.getName())
-                .articles(categoryDetails.getArticles())
-                .build();
+        category = categoryConverter.convertToDomain(categoryDetails);
 
-        return categoryRepository.save(category);
+        categoryRepository.save(category);
+
+        return categoryConverter.convertToResponseDto(category);
     }
 
     public void deleteCategory(UUID id) {
-        categoryRepository.deleteById(id);
+        CategoryEntity category = categoryRepository.findById(id).orElse(null);
+        List<ArticleEntity> articles = articleRepository.findAllByCategoryName(category.getName());
+
+        for (ArticleEntity article : articles) {
+            article.setCategory(null);
+        }
+
+        categoryRepository.delete(category);
     }
 }
