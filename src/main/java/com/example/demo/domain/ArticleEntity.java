@@ -7,6 +7,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,4 +34,7 @@ public class ArticleEntity extends TimeAuditEntity {
     @ManyToMany
     @JoinTable(name = "article_tag", joinColumns = @JoinColumn(name = "article_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private List<TagEntity> tags;
+
+    @OneToMany(mappedBy = "article")
+    private List<ArticleAuthorEntity> articleAuthors;
 }

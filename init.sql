@@ -1,0 +1,1 @@
+CREATE DATABASE wcs_database;

@@ -1,6 +1,9 @@
 package com.example.demo.domain;
 
+import java.util.List;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,5 +22,8 @@ public class AuthorEntity extends TimeAuditEntity {
 
     private String lastname;
     private String firstname;
+
+    @OneToMany(mappedBy = "author")
+    private List<ArticleAuthorEntity> articleAuthors;
 
 }

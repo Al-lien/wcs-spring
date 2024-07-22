@@ -1,6 +1,5 @@
 package com.example.demo.dto;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,14 +12,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ArticleRequestDto {
+public class AuthorRequestDto {
 
     UUID id;
-    String title;
-    String content;
-    LocalDateTime createdAt;
-    LocalDateTime updatedAt;
-    UUID categoryId;
-    List<UUID> tagIds;
-    List<ArticleAuthorRequestDto> authors;
+    String firstname;
+    String lastname;
+    List<ArticleAuthorRequestDto> articleAuthors;
+
 }
