@@ -1,9 +1,6 @@
 package com.example.demo.domain;
 
-import java.util.List;
-
 import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,12 +14,10 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "category")
-public class CategoryEntity extends TimeAuditEntity {
+@Table(name = "author")
+public class AuthorEntity extends TimeAuditEntity {
 
-    private String name;
-
-    @OneToMany(mappedBy = "category")
-    private List<ArticleEntity> articles;
+    private String lastname;
+    private String firstname;
 
 }
