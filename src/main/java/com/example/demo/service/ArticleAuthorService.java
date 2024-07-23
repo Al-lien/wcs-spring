@@ -55,4 +55,10 @@ public class ArticleAuthorService {
 
     }
 
+    public void deleteContribution(UUID id) {
+        ArticleAuthorEntity contribution = articleAuthorRepository.findById(id).orElse(null);
+
+        articleAuthorRepository.delete(contribution);
+    }
+
 }

@@ -5,9 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.domain.ArticleEntity;
 import com.example.demo.domain.CategoryEntity;
-import com.example.demo.dto.ArticleResponseDto;
 import com.example.demo.dto.CategoryArticleResponseDto;
 import com.example.demo.dto.CategoryRequestDto;
 import com.example.demo.dto.CategoryResponseDto;
