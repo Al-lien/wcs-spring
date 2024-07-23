@@ -18,6 +18,7 @@ import com.example.demo.dto.ArticleRequestDto;
 import com.example.demo.dto.ArticleResponseDto;
 import com.example.demo.service.ArticleService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -63,7 +64,7 @@ public class ArticleController {
     }
 
     @PostMapping
-    public ResponseEntity<ArticleResponseDto> createArticle(@RequestBody ArticleRequestDto articleDto) {
+    public ResponseEntity<ArticleResponseDto> createArticle(@Valid @RequestBody ArticleRequestDto articleDto) {
         ArticleResponseDto savedArticle = articleService.createArticle(articleDto);
 
         return ResponseEntity
@@ -73,7 +74,7 @@ public class ArticleController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ArticleResponseDto> updateArticle(@PathVariable("id") UUID id,
-            @RequestBody ArticleRequestDto articleDetailsDto) {
+            @Valid @RequestBody ArticleRequestDto articleDetailsDto) {
         ArticleResponseDto updatedArticle = articleService.updateArticle(id,
                 articleDetailsDto);
 

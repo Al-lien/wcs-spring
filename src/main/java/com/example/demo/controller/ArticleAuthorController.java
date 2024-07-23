@@ -18,6 +18,7 @@ import com.example.demo.dto.ArticleAuthorRequestDto;
 import com.example.demo.dto.ArticleAuthorResponseDto;
 import com.example.demo.service.ArticleAuthorService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -52,7 +53,7 @@ public class ArticleAuthorController {
 
     @PostMapping
     public ResponseEntity<ArticleAuthorResponseDto> createContribution(
-            @RequestBody ArticleAuthorRequestDto articleAuthorDto) {
+            @Valid @RequestBody ArticleAuthorRequestDto articleAuthorDto) {
         ArticleAuthorResponseDto savedContribution = articleAuthorService.createContribution(articleAuthorDto);
 
         return ResponseEntity
@@ -63,7 +64,7 @@ public class ArticleAuthorController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ArticleAuthorResponseDto> updateContribution(@PathVariable("id") UUID id,
-            @RequestBody ArticleAuthorRequestDto articleAuthorDto) {
+            @Valid @RequestBody ArticleAuthorRequestDto articleAuthorDto) {
         ArticleAuthorResponseDto updatedContribution = articleAuthorService.updateContribution(id, articleAuthorDto);
 
         if (updatedContribution == null) {

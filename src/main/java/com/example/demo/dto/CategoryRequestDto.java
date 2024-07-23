@@ -2,6 +2,7 @@ package com.example.demo.dto;
 
 import java.util.UUID;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +15,8 @@ import lombok.NoArgsConstructor;
 public class CategoryRequestDto {
 
     UUID id;
+
+    @NotBlank(message = "Category name is mandatory")
     String name;
 
 }

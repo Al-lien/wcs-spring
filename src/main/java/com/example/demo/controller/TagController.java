@@ -18,6 +18,7 @@ import com.example.demo.dto.TagRequestDto;
 import com.example.demo.dto.TagResponseDto;
 import com.example.demo.service.TagService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -50,7 +51,7 @@ public class TagController {
     }
 
     @PostMapping
-    public ResponseEntity<TagResponseDto> createTag(@RequestBody TagRequestDto tagDto) {
+    public ResponseEntity<TagResponseDto> createTag(@Valid @RequestBody TagRequestDto tagDto) {
         TagResponseDto savedTagDto = tagService.createTag(tagDto);
 
         return ResponseEntity
@@ -60,7 +61,7 @@ public class TagController {
 
     @PutMapping("/{id}")
     public ResponseEntity<TagResponseDto> updatedTag(@PathVariable("id") UUID id,
-            @RequestBody TagRequestDto tagDetailsDto) {
+            @Valid @RequestBody TagRequestDto tagDetailsDto) {
         TagResponseDto updatedTag = tagService.updateTag(id, tagDetailsDto);
 
         if (updatedTag == null) {

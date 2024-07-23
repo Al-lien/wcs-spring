@@ -18,6 +18,7 @@ import com.example.demo.dto.CategoryRequestDto;
 import com.example.demo.dto.CategoryResponseDto;
 import com.example.demo.service.CategoryService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -50,7 +51,7 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<CategoryResponseDto> createCategory(@RequestBody CategoryRequestDto categoryDto) {
+    public ResponseEntity<CategoryResponseDto> createCategory(@Valid @RequestBody CategoryRequestDto categoryDto) {
         CategoryResponseDto savedCategory = categoryService.createCategory(categoryDto);
 
         return ResponseEntity
@@ -60,7 +61,7 @@ public class CategoryController {
 
     @PutMapping("/{id}")
     public ResponseEntity<CategoryResponseDto> updateCategory(@PathVariable("id") UUID id,
-            @RequestBody CategoryRequestDto categoryDetailsDto) {
+            @Valid @RequestBody CategoryRequestDto categoryDetailsDto) {
         CategoryResponseDto updatedCategory = categoryService.updateCategory(id,
                 categoryDetailsDto);
 
