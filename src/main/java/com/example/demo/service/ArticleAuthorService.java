@@ -26,6 +26,11 @@ public class ArticleAuthorService {
 
     public List<ArticleAuthorResponseDto> getAllContributions() {
         List<ArticleAuthorEntity> contributions = articleAuthorRepository.findAll();
+
+        if (contributions.isEmpty()) {
+            return null;
+        }
+
         List<ArticleAuthorResponseDto> contributionDtos = contributions.stream()
                 .map(articleAuthorConverter::convertToResponseDto)
                 .collect(Collectors.toList());
@@ -33,29 +38,38 @@ public class ArticleAuthorService {
         return contributionDtos;
     }
 
-    @Transactional
-    public ArticleAuthorResponseDto createContribution(ArticleAuthorRequestDto articleAuthorDto) {
-        ArticleAuthorEntity articleAuthor = articleAuthorConverter.convertToDomain(articleAuthorDto);
+    public ArticleAuthorResponseDto getContributionById(UUID id) {
+        ArticleAuthorEntity contribution = articleAuthorRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Contribution with id: " + id + " wasn't found..."));
 
-        return articleAuthorConverter.convertToResponseDto(articleAuthorRepository.save(articleAuthor));
+        return articleAuthorConverter.convertToResponseDto(contribution);
+    }
+
+    @Transactional
+    public ArticleAuthorResponseDto createContribution(ArticleAuthorRequestDto newContributionDto) {
+        ArticleAuthorEntity contribution = articleAuthorConverter.convertToDomain(newContributionDto);
+
+        ArticleAuthorEntity savedContribution = articleAuthorRepository.save(contribution);
+
+        return articleAuthorConverter.convertToResponseDto(savedContribution);
 
     }
 
     @Transactional
-    public ArticleAuthorResponseDto updateContribution(UUID id, ArticleAuthorRequestDto articleAuthorDetails) {
+    public ArticleAuthorResponseDto updateContribution(UUID id, ArticleAuthorRequestDto contributionDetails) {
 
-        if (!id.equals(articleAuthorDetails.getId())) {
+        if (!id.equals(contributionDetails.getId())) {
             throw new IdMismatchException("Contribution id does not match path provided id...");
         }
 
         articleAuthorRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Contribution with id: " + id + " wasn't found..."));
 
-        ArticleAuthorEntity updatedArticle = articleAuthorConverter.convertToDomain(articleAuthorDetails);
+        ArticleAuthorEntity contributionToUpdate = articleAuthorConverter.convertToDomain(contributionDetails);
 
-        articleAuthorRepository.save(updatedArticle);
+        ArticleAuthorEntity updatedContribution = articleAuthorRepository.save(contributionToUpdate);
 
-        return articleAuthorConverter.convertToResponseDto(updatedArticle);
+        return articleAuthorConverter.convertToResponseDto(updatedContribution);
 
     }
 

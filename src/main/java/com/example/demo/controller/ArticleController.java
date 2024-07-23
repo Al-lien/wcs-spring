@@ -42,7 +42,6 @@ public class ArticleController {
 
     @GetMapping
     public ResponseEntity<List<ArticleResponseDto>> getAllArticles() {
-
         List<ArticleResponseDto> articles = articleService.getAllArticles();
 
         if (articles == null) {
@@ -75,7 +74,6 @@ public class ArticleController {
     @PutMapping("/{id}")
     public ResponseEntity<ArticleResponseDto> updateArticle(@PathVariable("id") UUID id,
             @RequestBody ArticleRequestDto articleDetailsDto) {
-
         ArticleResponseDto updatedArticle = articleService.updateArticle(id,
                 articleDetailsDto);
 
@@ -90,6 +88,7 @@ public class ArticleController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteArticle(@PathVariable("id") UUID id) {
         articleService.deleteArticle(id);
+
         return ResponseEntity.noContent().build();
     }
 

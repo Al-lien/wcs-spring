@@ -6,12 +6,14 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.example.demo.domain.ArticleAuthorEntity;
 import com.example.demo.domain.AuthorEntity;
 import com.example.demo.dto.AuthorRequestDto;
 import com.example.demo.dto.AuthorResponseDto;
 import com.example.demo.dto.converter.AuthorConverter;
 import com.example.demo.exception.IdMismatchException;
 import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.repository.ArticleAuthorRepository;
 import com.example.demo.repository.AuthorRepository;
 
 import jakarta.transaction.Transactional;
@@ -23,6 +25,7 @@ public class AuthorService {
 
     private final AuthorRepository authorRepository;
     private final AuthorConverter authorConverter;
+    private final ArticleAuthorRepository articleAuthorRepository;
 
     public List<AuthorResponseDto> getAllAuthors() {
         List<AuthorEntity> authors = authorRepository.findAll();
@@ -31,7 +34,8 @@ public class AuthorService {
             return null;
         }
 
-        List<AuthorResponseDto> authorDtos = authors.stream()
+        List<AuthorResponseDto> authorDtos = authors
+                .stream()
                 .map(authorConverter::convertToResponseDto)
                 .collect(Collectors.toList());
 
@@ -50,12 +54,13 @@ public class AuthorService {
     public AuthorResponseDto createAuthor(AuthorRequestDto newAuthor) {
         AuthorEntity author = authorConverter.convertToDomain(newAuthor);
 
-        return authorConverter.convertToResponseDto(author);
+        AuthorEntity savedAuthor = authorRepository.save(author);
+
+        return authorConverter.convertToResponseDto(savedAuthor);
     }
 
     @Transactional
     public AuthorResponseDto updateAuthor(UUID id, AuthorRequestDto authorDetails) {
-
         if (!id.equals(authorDetails.getId())) {
             throw new IdMismatchException("Author id does not match path provided id...");
         }
@@ -63,16 +68,24 @@ public class AuthorService {
         authorRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Author with id: " + id + " wasn't found..."));
 
-        AuthorEntity updatedAuthor = authorConverter.convertToDomain(authorDetails);
+        AuthorEntity authorToUpdate = authorConverter.convertToDomain(authorDetails);
 
-        authorRepository.save(updatedAuthor);
+        AuthorEntity updatedAuthor = authorRepository.save(authorToUpdate);
 
         return authorConverter.convertToResponseDto(updatedAuthor);
 
     }
 
     public void deleteAuthor(UUID id) {
+        AuthorEntity author = authorRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Author with id: " + id + " wasn't found..."));
+        List<ArticleAuthorEntity> contributions = articleAuthorRepository.findAllByAuthorId(author.getId());
 
+        for (ArticleAuthorEntity contribution : contributions) {
+            articleAuthorRepository.delete(contribution);
+        }
+
+        authorRepository.delete(author);
     }
 
 }

@@ -29,7 +29,6 @@ public class TagController {
 
     @GetMapping
     public ResponseEntity<List<TagResponseDto>> getAllTags() {
-
         List<TagResponseDto> tagDtos = tagService.getAllTags();
 
         if (tagDtos == null) {
@@ -41,7 +40,6 @@ public class TagController {
 
     @GetMapping("/{id}")
     public ResponseEntity<TagResponseDto> getTagById(@PathVariable("id") UUID id) {
-
         TagResponseDto tagDto = tagService.getTagById(id);
 
         if (tagDto == null) {
@@ -63,7 +61,6 @@ public class TagController {
     @PutMapping("/{id}")
     public ResponseEntity<TagResponseDto> updatedTag(@PathVariable("id") UUID id,
             @RequestBody TagRequestDto tagDetailsDto) {
-
         TagResponseDto updatedTag = tagService.updateTag(id, tagDetailsDto);
 
         if (updatedTag == null) {
@@ -76,8 +73,8 @@ public class TagController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTag(@PathVariable("id") UUID id) {
-
         tagService.deleteTag(id);
+
         return ResponseEntity.noContent().build();
     }
 }

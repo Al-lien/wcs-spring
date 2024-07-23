@@ -22,12 +22,15 @@ public class AuthorConverter {
                 .id(author.getId())
                 .firstname(author.getFirstname())
                 .lastname(author.getLastname())
-                .articles(
-                        author.getArticleAuthors()
-                                .stream()
-                                .map(articleAuthorConverter::convertToAuthorContributionResponseDto)
-                                .collect(Collectors.toList()))
                 .build();
+
+        if (author.getArticleAuthors() != null) {
+            authorDto.setArticles(
+                    author.getArticleAuthors()
+                            .stream()
+                            .map(articleAuthorConverter::convertToAuthorContributionResponseDto)
+                            .collect(Collectors.toList()));
+        }
 
         return authorDto;
     }
@@ -39,10 +42,6 @@ public class AuthorConverter {
                 .firstname(authorDto.getFirstname())
                 .lastname(authorDto.getLastname())
                 .build();
-
-        if (authorDto.getArticleAuthors() != null) {
-            author.setArticleAuthors(authorDto.getArticleAuthors());
-        }
 
         return author;
     }

@@ -6,12 +6,14 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.example.demo.domain.ArticleAuthorEntity;
 import com.example.demo.domain.ArticleEntity;
 import com.example.demo.dto.ArticleRequestDto;
 import com.example.demo.dto.ArticleResponseDto;
 import com.example.demo.dto.converter.ArticleConverter;
 import com.example.demo.exception.IdMismatchException;
 import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.repository.ArticleAuthorRepository;
 import com.example.demo.repository.ArticleRepository;
 
 import jakarta.transaction.Transactional;
@@ -23,6 +25,7 @@ public class ArticleService {
 
     private final ArticleRepository articleRepository;
     private final ArticleConverter articleConverter;
+    private final ArticleAuthorRepository articleAuthorRepository;
 
     public List<ArticleEntity> getAllArticleEntities(List<UUID> articleId) {
         return articleRepository.findAllById(articleId);
@@ -54,9 +57,9 @@ public class ArticleService {
     public ArticleResponseDto createArticle(ArticleRequestDto newArticle) {
         ArticleEntity article = articleConverter.convertToDomain(newArticle);
 
-        articleRepository.save(article);
+        ArticleEntity savedArticle = articleRepository.save(article);
 
-        return articleConverter.convertToResponseDto(article);
+        return articleConverter.convertToResponseDto(savedArticle);
     }
 
     @Transactional
@@ -68,9 +71,9 @@ public class ArticleService {
         articleRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Article with id: " + id + " wasn't found..."));
 
-        ArticleEntity updatedArticle = articleConverter.convertToDomain(articleDetails);
+        ArticleEntity articleToUpdate = articleConverter.convertToDomain(articleDetails);
 
-        articleRepository.save(updatedArticle);
+        ArticleEntity updatedArticle = articleRepository.save(articleToUpdate);
 
         return articleConverter.convertToResponseDto(updatedArticle);
 
@@ -80,11 +83,18 @@ public class ArticleService {
         ArticleEntity article = articleRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Article with id: " + id + " wasn't found..."));
 
+        List<ArticleAuthorEntity> contributions = articleAuthorRepository.findAllByArticleId(article.getId());
+
+        for (ArticleAuthorEntity contribution : contributions) {
+            articleAuthorRepository.delete(contribution);
+        }
+
         articleRepository.delete(article);
     }
 
     public List<ArticleResponseDto> getAllArticlesByTagsId(UUID tagId) {
         List<ArticleEntity> articles = articleRepository.findAllByTagsId(tagId);
+
         return articles
                 .stream()
                 .map(articleConverter::convertToResponseDto)

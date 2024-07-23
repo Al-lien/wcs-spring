@@ -54,15 +54,16 @@ public class TagService {
     }
 
     @Transactional
-    public TagResponseDto createTag(TagRequestDto tagDto) {
-        TagEntity tag = tagConverter.convertToDomain(tagDto);
+    public TagResponseDto createTag(TagRequestDto newTag) {
+        TagEntity tag = tagConverter.convertToDomain(newTag);
 
-        return tagConverter.convertToResponseDto(tagRepository.save(tag));
+        TagEntity savedTag = tagRepository.save(tag);
+
+        return tagConverter.convertToResponseDto(savedTag);
     }
 
     @Transactional
     public TagResponseDto updateTag(UUID id, TagRequestDto tagDetails) {
-
         if (!id.equals(tagDetails.getId())) {
             throw new IdMismatchException("Tag id does not match path provided id...");
         }
@@ -70,16 +71,17 @@ public class TagService {
         tagRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Tag with id: " + id + " wasn't found..."));
 
-        TagEntity updatedTag = tagConverter.convertToDomain(tagDetails);
+        TagEntity tagToUpdate = tagConverter.convertToDomain(tagDetails);
 
-        tagRepository.save(updatedTag);
+        TagEntity updatedTag = tagRepository.save(tagToUpdate);
 
         return tagConverter.convertToResponseDto(updatedTag);
 
     }
 
     public void deleteTag(UUID id) {
-        TagEntity tag = tagRepository.findById(id).orElse(null);
+        TagEntity tag = tagRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Tag with id: " + id + " wasn't found..."));
         List<ArticleEntity> articles = articleRepository.findAllByTagsId(tag.getId());
 
         for (ArticleEntity article : articles) {

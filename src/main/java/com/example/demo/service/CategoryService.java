@@ -58,6 +58,7 @@ public class CategoryService {
     public CategoryResponseDto getCategoryByName(String name) {
         CategoryEntity category = categoryRepository.findByName(name).orElseThrow(
                 () -> new ResourceNotFoundException("Category " + name + " wasn't found..."));
+
         return categoryConverter.convertToResponseDto(category);
     }
 
@@ -65,9 +66,9 @@ public class CategoryService {
     public CategoryResponseDto createCategory(CategoryRequestDto newCategory) {
         CategoryEntity category = categoryConverter.convertToDomain(newCategory);
 
-        categoryRepository.save(category);
+        CategoryEntity savedCategory = categoryRepository.save(category);
 
-        return categoryConverter.convertToResponseDto(category);
+        return categoryConverter.convertToResponseDto(savedCategory);
     }
 
     @Transactional
@@ -79,11 +80,11 @@ public class CategoryService {
         categoryRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Category with id: " + id + " wasn't found..."));
 
-        CategoryEntity category = categoryConverter.convertToDomain(categoryDetails);
+        CategoryEntity categoryToUpdate = categoryConverter.convertToDomain(categoryDetails);
 
-        categoryRepository.save(category);
+        CategoryEntity updatedCategory = categoryRepository.save(categoryToUpdate);
 
-        return categoryConverter.convertToResponseDto(category);
+        return categoryConverter.convertToResponseDto(updatedCategory);
     }
 
     public void deleteCategory(UUID id) {

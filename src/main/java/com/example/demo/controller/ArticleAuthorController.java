@@ -31,8 +31,23 @@ public class ArticleAuthorController {
     public ResponseEntity<List<ArticleAuthorResponseDto>> getAllContributions() {
         List<ArticleAuthorResponseDto> contributions = articleAuthorService.getAllContributions();
 
+        if (contributions == null) {
+            return ResponseEntity.noContent().build();
+        }
+
         return ResponseEntity.ok().body(contributions);
 
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ArticleAuthorResponseDto> getContributionById(@PathVariable("id") UUID id) {
+        ArticleAuthorResponseDto contribution = articleAuthorService.getContributionById(id);
+
+        if (contribution == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok().body(contribution);
     }
 
     @PostMapping
