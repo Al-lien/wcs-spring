@@ -54,13 +54,13 @@ public class ArticleController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ArticleResponseDto> getArticleById(@PathVariable("id") UUID id) {
-        ArticleResponseDto articleDto = articleService.getArticleById(id);
+        ArticleResponseDto article = articleService.getArticleById(id);
 
-        if (articleDto == null) {
+        if (article == null) {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(articleDto);
+        return ResponseEntity.ok(article);
     }
 
     @PostMapping

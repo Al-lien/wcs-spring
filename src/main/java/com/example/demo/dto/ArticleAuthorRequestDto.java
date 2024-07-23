@@ -13,7 +13,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ArticleAuthorRequestDto {
 
+    UUID id;
     UUID articleId;
     UUID authorId;
     String contribution;
+
 }

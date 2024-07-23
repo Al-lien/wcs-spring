@@ -1,6 +1,5 @@
 package com.example.demo.dto;
 
-import java.util.List;
 import java.util.UUID;
 
 import lombok.AllArgsConstructor;
@@ -12,12 +11,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ArticleResponseDto {
+public class ArticleAuthorResponseDto {
 
     UUID id;
-    String title;
-    String content;
-    String category;
-    List<String> tags;
-    List<ArticleAuthorResponseDto> articleAuthors;
+    UUID articleId;
+    UUID authorId;
+    String contribution;
 }

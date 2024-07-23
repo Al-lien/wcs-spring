@@ -9,10 +9,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+import com.example.demo.domain.ArticleAuthorEntity;
 import com.example.demo.domain.ArticleEntity;
 import com.example.demo.domain.AuthorEntity;
 import com.example.demo.domain.CategoryEntity;
 import com.example.demo.domain.TagEntity;
+import com.example.demo.repository.ArticleAuthorRepository;
 import com.example.demo.repository.ArticleRepository;
 import com.example.demo.repository.AuthorRepository;
 import com.example.demo.repository.CategoryRepository;
@@ -31,7 +33,8 @@ public class DemoApplication {
 			CategoryRepository categoryRepository,
 			TagRepository tagRespository,
 			ArticleRepository articleRepository,
-			AuthorRepository authorRepository) {
+			AuthorRepository authorRepository,
+			ArticleAuthorRepository articleAuthorRepository) {
 
 		System.out.println("RUNNER");
 
@@ -51,6 +54,10 @@ public class DemoApplication {
 					.name("Culture")
 					.articles(null)
 					.build();
+
+			CategoryEntity category1 = categoryRepository.save(categoryPolitics);
+			CategoryEntity category2 = categoryRepository.save(categoryInternational);
+			CategoryEntity category3 = categoryRepository.save(categoryCulture);
 
 			TagEntity tagLiterature = TagEntity.builder()
 					.name("Literature")
@@ -77,21 +84,27 @@ public class DemoApplication {
 					.articles(null)
 					.build();
 
+			TagEntity tag1 = tagRespository.save(tagLiterature);
+			TagEntity tag2 = tagRespository.save(tagBook);
+			TagEntity tag3 = tagRespository.save(tagWar);
+			TagEntity tag4 = tagRespository.save(tagMayoSauce);
+			TagEntity tag5 = tagRespository.save(tagMayor);
+
 			List<TagEntity> tagsHarryPotter = new ArrayList<>();
-			tagsHarryPotter.add(tagLiterature);
-			tagsHarryPotter.add(tagBook);
+			tagsHarryPotter.add(tag1);
+			tagsHarryPotter.add(tag2);
 
 			List<TagEntity> tagsEwoks = new ArrayList<>();
-			tagsEwoks.add(tagWar);
+			tagsEwoks.add(tag3);
 
 			List<TagEntity> tagsMayor = new ArrayList<>();
-			tagsMayor.add(tagMayoSauce);
-			tagsMayor.add(tagMayor);
+			tagsMayor.add(tag4);
+			tagsMayor.add(tag5);
 
 			ArticleEntity articleHarryPotter = ArticleEntity.builder()
 					.title("Harry Potter, good guy or bad guy ?")
 					.content("Who really is Harry Potter, the \"boy who lived\" ?")
-					.category(categoryCulture)
+					.category(category3)
 					.tags(tagsHarryPotter)
 					.build();
 
@@ -99,16 +112,20 @@ public class DemoApplication {
 					.title("The raging war between Ewoks and droid.")
 					.content(
 							"The King of Ewok in the tourment of this recent conflict which divides the opinion among youth.")
-					.category(categoryInternational)
+					.category(category2)
 					.tags(tagsEwoks)
 					.build();
 
 			ArticleEntity articleMayor = ArticleEntity.builder()
 					.title("Mayor in mayo fury !")
 					.content("Mayor Arnold ordered 3000 pounds of hellmann's sauce with state fund. ")
-					.category(categoryPolitics)
+					.category(category1)
 					.tags(tagsMayor)
 					.build();
+
+			ArticleEntity article1 = articleRepository.save(articleHarryPotter);
+			ArticleEntity article2 = articleRepository.save(articleEwoks);
+			ArticleEntity article3 = articleRepository.save(articleMayor);
 
 			AuthorEntity authorJohn = AuthorEntity.builder()
 					.lastname("Doe")
@@ -120,22 +137,37 @@ public class DemoApplication {
 					.firstname("Jane")
 					.build();
 
-			categoryRepository.save(categoryPolitics);
-			categoryRepository.save(categoryInternational);
-			categoryRepository.save(categoryCulture);
+			AuthorEntity author1 = authorRepository.save(authorJohn);
+			AuthorEntity author2 = authorRepository.save(authorJane);
 
-			tagRespository.save(tagLiterature);
-			tagRespository.save(tagBook);
-			tagRespository.save(tagWar);
-			tagRespository.save(tagMayoSauce);
-			tagRespository.save(tagMayor);
+			ArticleAuthorEntity articleAuthor1 = ArticleAuthorEntity.builder()
+					.article(article1)
+					.author(author1)
+					.contribution("redactor")
+					.build();
 
-			articleRepository.save(articleHarryPotter);
-			articleRepository.save(articleEwoks);
-			articleRepository.save(articleMayor);
+			ArticleAuthorEntity articleAuthor2 = ArticleAuthorEntity.builder()
+					.article(article1)
+					.author(author2)
+					.contribution("editor")
+					.build();
 
-			authorRepository.save(authorJohn);
-			authorRepository.save(authorJane);
+			ArticleAuthorEntity articleAuthor3 = ArticleAuthorEntity.builder()
+					.article(article2)
+					.author(author1)
+					.contribution("killer")
+					.build();
+
+			ArticleAuthorEntity articleAuthor4 = ArticleAuthorEntity.builder()
+					.article(article3)
+					.author(author2)
+					.contribution("stalker")
+					.build();
+
+			articleAuthorRepository.save(articleAuthor1);
+			articleAuthorRepository.save(articleAuthor2);
+			articleAuthorRepository.save(articleAuthor3);
+			articleAuthorRepository.save(articleAuthor4);
 
 		};
 	}

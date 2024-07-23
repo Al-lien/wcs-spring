@@ -21,6 +21,7 @@ public class ArticleConverter {
 
     private final CategoryRepository categoryRepository;
     private final TagRepository tagRepository;
+    private final ArticleAuthorConverter articleAuthorConverter;
 
     public ArticleResponseDto convertToResponseDto(ArticleEntity article) {
 
@@ -28,6 +29,11 @@ public class ArticleConverter {
                 .id(article.getId())
                 .title(article.getTitle())
                 .content(article.getContent())
+                .articleAuthors(
+                        article.getArticleAuthors()
+                                .stream()
+                                .map(articleAuthorConverter::convertToResponseDto)
+                                .collect(Collectors.toList()))
                 .build();
 
         if (article.getCategory() != null) {
