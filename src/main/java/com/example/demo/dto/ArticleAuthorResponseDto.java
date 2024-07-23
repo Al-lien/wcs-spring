@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class ArticleAuthorResponseDto {
 
     UUID id;
-    UUID articleId;
-    UUID authorId;
+    String articleTitle;
+    String authorFullname;
     String contribution;
 }

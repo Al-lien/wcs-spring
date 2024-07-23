@@ -23,8 +23,8 @@ public class ArticleAuthorConverter {
 
         ArticleAuthorResponseDto articleAuthorDto = ArticleAuthorResponseDto.builder()
                 .id(articleAuthor.getId())
-                .authorId(articleAuthor.getAuthor().getId())
-                .articleId(articleAuthor.getAuthor().getId())
+                .authorFullname(articleAuthor.getAuthor().getFullname())
+                .articleTitle(articleAuthor.getArticle().getTitle())
                 .contribution(articleAuthor.getContribution())
                 .build();
 

@@ -26,4 +26,8 @@ public class AuthorEntity extends TimeAuditEntity {
     @OneToMany(mappedBy = "author")
     private List<ArticleAuthorEntity> articleAuthors;
 
+    public String getFullname() {
+        return this.firstname + " " + this.lastname;
+    }
+
 }
