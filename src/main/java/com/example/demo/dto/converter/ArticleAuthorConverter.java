@@ -34,7 +34,6 @@ public class ArticleAuthorConverter {
     public ArticleContributionResponseDto convertToContributionResponseDto(ArticleAuthorEntity articleAuthor) {
 
         ArticleContributionResponseDto articleAuthorDto = ArticleContributionResponseDto.builder()
-                .id(articleAuthor.getId())
                 .author(articleAuthor.getFullname())
                 .contribution(articleAuthor.getContribution())
                 .build();
