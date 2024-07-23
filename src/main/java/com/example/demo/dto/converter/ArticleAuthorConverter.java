@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import com.example.demo.domain.ArticleAuthorEntity;
 import com.example.demo.dto.ArticleAuthorRequestDto;
 import com.example.demo.dto.ArticleAuthorResponseDto;
+import com.example.demo.dto.ArticleContributionResponseDto;
+import com.example.demo.dto.AuthorContributionResponseDto;
 import com.example.demo.repository.ArticleRepository;
 import com.example.demo.repository.AuthorRepository;
 
@@ -23,6 +25,28 @@ public class ArticleAuthorConverter {
                 .id(articleAuthor.getId())
                 .authorId(articleAuthor.getAuthor().getId())
                 .articleId(articleAuthor.getAuthor().getId())
+                .contribution(articleAuthor.getContribution())
+                .build();
+
+        return articleAuthorDto;
+    }
+
+    public ArticleContributionResponseDto convertToContributionResponseDto(ArticleAuthorEntity articleAuthor) {
+
+        ArticleContributionResponseDto articleAuthorDto = ArticleContributionResponseDto.builder()
+                .id(articleAuthor.getId())
+                .author(articleAuthor.getFullname())
+                .contribution(articleAuthor.getContribution())
+                .build();
+
+        return articleAuthorDto;
+    }
+
+    public AuthorContributionResponseDto convertToAuthorContributionResponseDto(ArticleAuthorEntity articleAuthor) {
+
+        AuthorContributionResponseDto articleAuthorDto = AuthorContributionResponseDto.builder()
+                .id(articleAuthor.getId())
+                .title(articleAuthor.getArticle().getTitle())
                 .contribution(articleAuthor.getContribution())
                 .build();
 

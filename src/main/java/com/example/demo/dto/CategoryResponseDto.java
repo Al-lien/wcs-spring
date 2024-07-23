@@ -16,5 +16,5 @@ public class CategoryResponseDto {
 
     UUID id;
     String name;
-    List<ArticleResponseDto> articles;
+    List<CategoryArticleResponseDto> articles;
 }

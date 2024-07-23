@@ -17,8 +17,7 @@ public class AuditingConfig {
     public static class AuditorAwareImpl implements AuditorAware<String> {
         @Override
         public Optional<String> getCurrentAuditor() {
-            // Return the current user, or a fixed value if not needed
-            return Optional.of("system");
+            return Optional.of("System");
         }
     }
 }

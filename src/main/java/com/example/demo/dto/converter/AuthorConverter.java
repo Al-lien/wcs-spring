@@ -22,10 +22,10 @@ public class AuthorConverter {
                 .id(author.getId())
                 .firstname(author.getFirstname())
                 .lastname(author.getLastname())
-                .articleAuthors(
+                .articles(
                         author.getArticleAuthors()
                                 .stream()
-                                .map(articleAuthorConverter::convertToResponseDto)
+                                .map(articleAuthorConverter::convertToAuthorContributionResponseDto)
                                 .collect(Collectors.toList()))
                 .build();
 

@@ -5,8 +5,10 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.example.demo.domain.ArticleEntity;
 import com.example.demo.domain.CategoryEntity;
 import com.example.demo.dto.ArticleResponseDto;
+import com.example.demo.dto.CategoryArticleResponseDto;
 import com.example.demo.dto.CategoryRequestDto;
 import com.example.demo.dto.CategoryResponseDto;
 
@@ -27,9 +29,9 @@ public class CategoryConverter {
 
         if (category.getArticles() != null) {
 
-            List<ArticleResponseDto> articles = category.getArticles()
+            List<CategoryArticleResponseDto> articles = category.getArticles()
                     .stream()
-                    .map(articleConverter::convertToResponseDto)
+                    .map(articleConverter::convertToCategoryArticleResponseDto)
                     .collect(Collectors.toList());
 
             categoryDto.setArticles(articles);

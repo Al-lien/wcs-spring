@@ -10,6 +10,7 @@ import com.example.demo.domain.CategoryEntity;
 import com.example.demo.domain.TagEntity;
 import com.example.demo.dto.ArticleRequestDto;
 import com.example.demo.dto.ArticleResponseDto;
+import com.example.demo.dto.CategoryArticleResponseDto;
 import com.example.demo.repository.CategoryRepository;
 import com.example.demo.repository.TagRepository;
 
@@ -32,7 +33,7 @@ public class ArticleConverter {
                 .articleAuthors(
                         article.getArticleAuthors()
                                 .stream()
-                                .map(articleAuthorConverter::convertToResponseDto)
+                                .map(articleAuthorConverter::convertToContributionResponseDto)
                                 .collect(Collectors.toList()))
                 .build();
 
@@ -51,6 +52,16 @@ public class ArticleConverter {
 
         return articleDto;
 
+    }
+
+    public CategoryArticleResponseDto convertToCategoryArticleResponseDto(ArticleEntity articleEntity) {
+
+        CategoryArticleResponseDto categoryArticleDto = CategoryArticleResponseDto.builder()
+                .id(articleEntity.getId())
+                .title(articleEntity.getTitle())
+                .build();
+
+        return categoryArticleDto;
     }
 
     public ArticleEntity convertToDomain(ArticleRequestDto articleDto) {

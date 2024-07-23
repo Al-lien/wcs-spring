@@ -101,6 +101,9 @@ public class DemoApplication {
 			tagsMayor.add(tag4);
 			tagsMayor.add(tag5);
 
+			List<TagEntity> tagsFood = new ArrayList<>();
+			tagsFood.add(tag3);
+
 			ArticleEntity articleHarryPotter = ArticleEntity.builder()
 					.title("Harry Potter, good guy or bad guy ?")
 					.content("Who really is Harry Potter, the \"boy who lived\" ?")
@@ -123,9 +126,17 @@ public class DemoApplication {
 					.tags(tagsMayor)
 					.build();
 
+			ArticleEntity articleFood = ArticleEntity.builder()
+					.title("Great food, but bad wine ?")
+					.content("This restaurant was serving great food with bad wine. What the hell is that ?! ")
+					.category(category2)
+					.tags(tagsFood)
+					.build();
+
 			ArticleEntity article1 = articleRepository.save(articleHarryPotter);
 			ArticleEntity article2 = articleRepository.save(articleEwoks);
 			ArticleEntity article3 = articleRepository.save(articleMayor);
+			ArticleEntity article4 = articleRepository.save(articleFood);
 
 			AuthorEntity authorJohn = AuthorEntity.builder()
 					.lastname("Doe")
@@ -164,10 +175,17 @@ public class DemoApplication {
 					.contribution("stalker")
 					.build();
 
+			ArticleAuthorEntity articleAuthor5 = ArticleAuthorEntity.builder()
+					.article(article4)
+					.author(author2)
+					.contribution("writter")
+					.build();
+
 			articleAuthorRepository.save(articleAuthor1);
 			articleAuthorRepository.save(articleAuthor2);
 			articleAuthorRepository.save(articleAuthor3);
 			articleAuthorRepository.save(articleAuthor4);
+			articleAuthorRepository.save(articleAuthor5);
 
 		};
 	}

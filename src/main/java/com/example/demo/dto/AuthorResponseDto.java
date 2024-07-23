@@ -17,6 +17,6 @@ public class AuthorResponseDto {
     UUID id;
     String firstname;
     String lastname;
-    List<ArticleAuthorResponseDto> articleAuthors;
+    List<AuthorContributionResponseDto> articles;
 
 }

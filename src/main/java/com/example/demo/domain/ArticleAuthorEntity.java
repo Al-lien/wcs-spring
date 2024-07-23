@@ -31,4 +31,8 @@ public class ArticleAuthorEntity extends TimeAuditEntity {
     @Column(nullable = false, length = 50)
     private String contribution;
 
+    public String getFullname() {
+        return author.getFirstname() + " " + author.getLastname();
+    }
+
 }
