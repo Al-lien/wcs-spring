@@ -10,6 +10,8 @@ import com.example.demo.domain.ArticleAuthorEntity;
 import com.example.demo.dto.ArticleAuthorRequestDto;
 import com.example.demo.dto.ArticleAuthorResponseDto;
 import com.example.demo.dto.converter.ArticleAuthorConverter;
+import com.example.demo.exception.IdMismatchException;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.ArticleAuthorRepository;
 
 import jakarta.transaction.Transactional;
@@ -40,14 +42,16 @@ public class ArticleAuthorService {
     }
 
     @Transactional
-    public ArticleAuthorResponseDto updateContribution(UUID id, ArticleAuthorRequestDto articleAuthorDto) {
-        ArticleAuthorEntity articleAuthor = articleAuthorRepository.findById(id).orElse(null);
+    public ArticleAuthorResponseDto updateContribution(UUID id, ArticleAuthorRequestDto articleAuthorDetails) {
 
-        if (articleAuthor == null) {
-            return null;
+        if (!id.equals(articleAuthorDetails.getId())) {
+            throw new IdMismatchException("Contribution id does not match path provided id...");
         }
 
-        ArticleAuthorEntity updatedArticle = articleAuthorConverter.convertToDomain(articleAuthorDto);
+        articleAuthorRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Contribution with id: " + id + " wasn't found..."));
+
+        ArticleAuthorEntity updatedArticle = articleAuthorConverter.convertToDomain(articleAuthorDetails);
 
         articleAuthorRepository.save(updatedArticle);
 
@@ -56,7 +60,8 @@ public class ArticleAuthorService {
     }
 
     public void deleteContribution(UUID id) {
-        ArticleAuthorEntity contribution = articleAuthorRepository.findById(id).orElse(null);
+        ArticleAuthorEntity contribution = articleAuthorRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Contribution with id: " + id + " wasn't found..."));
 
         articleAuthorRepository.delete(contribution);
     }

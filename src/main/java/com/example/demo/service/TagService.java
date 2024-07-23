@@ -11,6 +11,8 @@ import com.example.demo.domain.TagEntity;
 import com.example.demo.dto.TagRequestDto;
 import com.example.demo.dto.TagResponseDto;
 import com.example.demo.dto.converter.TagConverter;
+import com.example.demo.exception.IdMismatchException;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.ArticleRepository;
 import com.example.demo.repository.TagRepository;
 
@@ -45,7 +47,8 @@ public class TagService {
     }
 
     public TagResponseDto getTagById(UUID id) {
-        TagEntity tag = tagRepository.findById(id).orElse(null);
+        TagEntity tag = tagRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Tag with id: " + id + " wasn't found..."));
 
         return tagConverter.convertToResponseDto(tag);
     }
@@ -59,11 +62,13 @@ public class TagService {
 
     @Transactional
     public TagResponseDto updateTag(UUID id, TagRequestDto tagDetails) {
-        TagEntity tag = tagRepository.findById(id).orElse(null);
 
-        if (tag == null) {
-            return null;
+        if (!id.equals(tagDetails.getId())) {
+            throw new IdMismatchException("Tag id does not match path provided id...");
         }
+
+        tagRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Tag with id: " + id + " wasn't found..."));
 
         TagEntity updatedTag = tagConverter.convertToDomain(tagDetails);
 

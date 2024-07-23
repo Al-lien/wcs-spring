@@ -11,6 +11,8 @@ import com.example.demo.domain.CategoryEntity;
 import com.example.demo.dto.CategoryRequestDto;
 import com.example.demo.dto.CategoryResponseDto;
 import com.example.demo.dto.converter.CategoryConverter;
+import com.example.demo.exception.IdMismatchException;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.ArticleRepository;
 import com.example.demo.repository.CategoryRepository;
 
@@ -26,7 +28,9 @@ public class CategoryService {
     private final CategoryConverter categoryConverter;
 
     public CategoryEntity getCategoryEntity(UUID id) {
-        return categoryRepository.findById(id).orElse(null);
+        return categoryRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Category Entity with id: " + id + " wasn't found..."));
+
     }
 
     public List<CategoryResponseDto> getAllCategories() {
@@ -45,13 +49,15 @@ public class CategoryService {
     }
 
     public CategoryResponseDto getCategoryById(UUID id) {
-        CategoryEntity category = categoryRepository.findById(id).orElse(null);
+        CategoryEntity category = categoryRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Category with id: " + id + " wasn't found..."));
 
         return categoryConverter.convertToResponseDto(category);
     }
 
     public CategoryResponseDto getCategoryByName(String name) {
-        CategoryEntity category = categoryRepository.findByName(name).orElse(null);
+        CategoryEntity category = categoryRepository.findByName(name).orElseThrow(
+                () -> new ResourceNotFoundException("Category " + name + " wasn't found..."));
         return categoryConverter.convertToResponseDto(category);
     }
 
@@ -67,16 +73,13 @@ public class CategoryService {
     @Transactional
     public CategoryResponseDto updateCategory(UUID id, CategoryRequestDto categoryDetails) {
         if (!id.equals(categoryDetails.getId())) {
-            throw new IllegalArgumentException("Category id does not match path provided id...");
+            throw new IdMismatchException("Category id does not match path provided id...");
         }
 
-        CategoryEntity category = categoryRepository.findById(id).orElse(null);
+        categoryRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Category with id: " + id + " wasn't found..."));
 
-        if (category == null) {
-            return null;
-        }
-
-        category = categoryConverter.convertToDomain(categoryDetails);
+        CategoryEntity category = categoryConverter.convertToDomain(categoryDetails);
 
         categoryRepository.save(category);
 

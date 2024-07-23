@@ -10,6 +10,8 @@ import com.example.demo.domain.AuthorEntity;
 import com.example.demo.dto.AuthorRequestDto;
 import com.example.demo.dto.AuthorResponseDto;
 import com.example.demo.dto.converter.AuthorConverter;
+import com.example.demo.exception.IdMismatchException;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.AuthorRepository;
 
 import jakarta.transaction.Transactional;
@@ -38,7 +40,8 @@ public class AuthorService {
     }
 
     public AuthorResponseDto getAuthorById(UUID id) {
-        AuthorEntity author = authorRepository.findById(id).orElse(null);
+        AuthorEntity author = authorRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Author with id: " + id + " wasn't found..."));
 
         return authorConverter.convertToResponseDto(author);
     }
@@ -52,11 +55,13 @@ public class AuthorService {
 
     @Transactional
     public AuthorResponseDto updateAuthor(UUID id, AuthorRequestDto authorDetails) {
-        AuthorEntity author = authorRepository.findById(id).orElse(null);
 
-        if (author == null) {
-            return null;
+        if (!id.equals(authorDetails.getId())) {
+            throw new IdMismatchException("Author id does not match path provided id...");
         }
+
+        authorRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Author with id: " + id + " wasn't found..."));
 
         AuthorEntity updatedAuthor = authorConverter.convertToDomain(authorDetails);
 
