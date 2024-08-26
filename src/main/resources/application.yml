@@ -13,3 +13,8 @@ spring:
         format_sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+security:
+  jwt:
+    secret-key: 5EC31A9D9E36ED1DBD794BF65B43627AC4967EE8CD795994D85CA3AF882418D5
+    expiration-time: 3600000
