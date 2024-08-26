@@ -18,9 +18,9 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll() // Permettre l'accès public aux endpoints sous /auth/
-                        .anyRequest().authenticated() // Tous les autres endpoints nécessitent une authentification
-                )
+                        .requestMatchers("/auth/**").permitAll()
+                        .anyRequest()
+                        .authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();
